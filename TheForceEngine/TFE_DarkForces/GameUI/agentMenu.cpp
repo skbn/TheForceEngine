@@ -18,6 +18,14 @@
 #include <TFE_System/system.h>
 #include <TFE_Jedi/Renderer/virtualFramebuffer.h>
 
+#ifdef __AMIGA__
+#include "amiga/ecs_palette.h"
+#endif
+
+#ifndef CONV_6bitTo8bit
+#define CONV_6bitTo8bit(x) (((x)<<2) | ((x)>>4))
+#endif
+
 using namespace TFE_Jedi;
 
 namespace TFE_DarkForces
@@ -431,9 +439,14 @@ namespace TFE_DarkForces
 		u32 palette[256];
 		u32* outColor = palette;
 		u8* srcColor = s_menuPalette;
+
+#ifdef __AMIGA__
+		ecsUpdateColormap(NULL);
+#endif
+
 		for (s32 i = 0; i < 256; i++, outColor++, srcColor += 3)
 		{
-			*outColor = u32(srcColor[0]) | (u32(srcColor[1]) << 8u) | (u32(srcColor[2]) << 16u) | (0xffu << 24u);
+			*outColor = CONV_6bitTo8bit(srcColor[0]) | (CONV_6bitTo8bit(srcColor[1]) << 8u) | (CONV_6bitTo8bit(srcColor[2]) << 16u) | (0xffu << 24u);
 		}
 		vfb_setPalette(palette);
 	}

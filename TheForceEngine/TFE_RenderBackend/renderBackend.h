@@ -122,6 +122,9 @@ namespace TFE_RenderBackend
 	void copyBackbufferToRenderTarget(RenderTargetHandle dst);
 	void clearVirtualDisplay(f32* color, bool clearColor=true);
 	void setPalette(const u32* palette);
+	void setBasePalette(const u32* palette);
+	void setBasePaletteRaw(const u8* palette768);
+	void applyFrameFx(s32 healthFx, s32 shieldFx, s32 flashFx, JBool lumR, JBool lumG, JBool lumB, s32 brightness, JBool fxEnabled, JBool brightnessEnabled);
 	const u32* getPalette();
 	const TextureGpu* getPaletteTexture();
 	void setColorCorrection(bool enabled, const ColorCorrection* color = nullptr, bool bloomChanged = false);

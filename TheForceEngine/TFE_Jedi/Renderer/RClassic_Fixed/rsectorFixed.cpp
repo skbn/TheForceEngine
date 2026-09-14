@@ -15,7 +15,9 @@
 #include "redgePairFixed.h"
 #include "rclassicFixedSharedState.h"
 #include "robj3d_fixed/robj3dFixed.h"
+#include "rwallFixed.h"
 #include "../rcommon.h"
+#include "amiga/renderer_asm.h"
 #ifdef __AMIGA__
 #define s_width (320)
 #define s_height (200)

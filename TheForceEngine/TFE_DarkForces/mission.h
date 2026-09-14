@@ -47,4 +47,5 @@ namespace TFE_DarkForces
 	extern u8 s_loadingScreenPal[];
 	extern u8 s_levelPalette[];
 	extern u8 s_basePalette[];
+	extern JBool s_updateHudColors;
 }  // namespace TFE_DarkForces

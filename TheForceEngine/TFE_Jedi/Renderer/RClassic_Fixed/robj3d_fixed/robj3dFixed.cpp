@@ -12,6 +12,9 @@
 #include "../rclassicFixedSharedState.h"
 #include "../../rcommon.h"
 #ifdef __AMIGA__
+#include "amiga/renderer_asm.h"
+#endif
+#ifdef __AMIGA__
 #define s_width (320)
 #define s_height (200)
 #endif
@@ -24,7 +27,7 @@ extern SecObject* s_drawnObj[];
 
 namespace RClassic_Fixed
 {
-	void robj3d_projectVertices(vec3_fixed* pos, s32 count, vec3_fixed* out);
+	void robj3d_projectVertices_c(vec3_fixed* pos, s32 count, vec3_fixed* out);
 	void robj3d_drawVertices(s32 vertexCount, const vec3_fixed* vertices, u8 color);
 	s32 polygonSort(const void* r0, const void* r1);
 
@@ -113,7 +116,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void robj3d_projectVertices(vec3_fixed* pos, s32 count, vec3_fixed* out)
+	void robj3d_projectVertices_c(vec3_fixed* pos, s32 count, vec3_fixed* out)
 	{
 		for (s32 i = 0; i < count; i++, pos++, out++)
 		{

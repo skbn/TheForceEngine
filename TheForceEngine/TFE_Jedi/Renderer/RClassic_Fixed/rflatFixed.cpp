@@ -14,6 +14,7 @@
 #include "../redgePair.h"
 #include "../rcommon.h"
 #ifdef __AMIGA__
+#include "amiga/renderer_asm.h"
 #define FIXED_6_26 // 6.26 fixed point
 #define s_width (320)
 #define s_height (200)
@@ -42,7 +43,7 @@ namespace RClassic_Fixed
 	static s32 s_ftexWidthMask;
 	static s32 s_ftexHeightMask;
 	static s32 s_ftexHeightLog2;
-#ifdef __AMIGA__1
+#ifdef __AMIGA__
 	#define s_ftexDataEnd (4095)
 #endif
 		
@@ -104,7 +105,7 @@ namespace RClassic_Fixed
 				
 	// This produces functionally identical results to the original but splits apart the U/V and dUdx/dVdx into seperate variables
 	// to account for C vs ASM differences.
-	void drawScanline()
+	void drawScanline_Lit_c()
 	{
 #ifdef FIXED_6_26
 		u32 U = s_scanlineU0 << 10;
@@ -154,7 +155,7 @@ namespace RClassic_Fixed
 #endif
 	}
 
-	void drawScanline_Fullbright()
+	void drawScanline_Fullbright_c()
 	{
 #ifdef FIXED_6_26
 		u32 V = s_scanlineV0 << 10;
@@ -203,7 +204,7 @@ namespace RClassic_Fixed
 #endif
 	}
 
-	void drawScanline_Trans()
+	void drawScanline_Trans_c()
 	{
 #ifdef FIXED_6_26
 		u32 V = s_scanlineV0 << 10;
@@ -256,7 +257,7 @@ namespace RClassic_Fixed
 #endif
 	}
 
-	void drawScanline_Fullbright_Trans()
+	void drawScanline_Fullbright_Trans_c()
 	{
 #ifdef FIXED_6_26
 		u32 V = s_scanlineV0 << 10;
@@ -314,7 +315,7 @@ namespace RClassic_Fixed
 		s_ftexHeightMask = tex->height - 1;
 		s_ftexHeightLog2 = tex->logSizeY;
 		s_ftexImage = tex->image;
-#ifndef __AMIGA__1
+#ifndef __AMIGA__
 		s_ftexDataEnd = tex->width * tex->height - 1;
 #endif
 
@@ -523,7 +524,7 @@ namespace RClassic_Fixed
 		s_ftexHeightMask = texture->height - 1;
 		s_ftexHeightLog2 = texture->logSizeY;
 		s_ftexImage      = texture->image;
-#ifndef __AMIGA__1
+#ifndef __AMIGA__
 		s_ftexDataEnd    = texture->width * texture->height - 1;
 #endif
 	}
@@ -566,6 +567,18 @@ namespace RClassic_Fixed
 		const s32 index = (!s_scanlineLight) + trans*2;
 		c_scanlineDrawFunc[index]();
 	}
+
+extern "C"
+{
+	fixed16_16 *g_asm_scanlineU0 = &s_scanlineU0;
+	fixed16_16 *g_asm_scanlineV0 = &s_scanlineV0;
+	fixed16_16 *g_asm_scanline_dUdX = &s_scanline_dUdX;
+	fixed16_16 *g_asm_scanline_dVdX = &s_scanline_dVdX;
+	s32 *g_asm_scanlineWidth = &s_scanlineWidth;
+	const u8 **g_asm_scanlineLight = &s_scanlineLight;
+	u8 **g_asm_scanlineOut = &s_scanlineOut;
+	u8 **g_asm_ftexImage = &s_ftexImage;
+}
 
 }  // RFlatFixed
 

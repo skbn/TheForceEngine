@@ -13,6 +13,7 @@
 #include "rclassicFixedSharedState.h"
 #include "../rcommon.h"
 #include "../jediRenderer.h"
+#include "amiga/renderer_asm.h"
 #ifdef __AMIGA__
 #define s_width (320)
 #define s_height (200)
@@ -56,14 +57,6 @@ namespace RClassic_Fixed
 #ifdef __AMIGA__
 	static inline
 #endif
-	fixed16_16 solveForZ(RWallSegmentFixed* wallSegment, s32 x, fixed16_16 numerator, fixed16_16* outViewDx=nullptr);
-	void drawColumn_Fullbright();
-	void drawColumn_Lit();
-	void drawColumn_Fullbright_Trans();
-	void drawColumn_Lit_Trans();
-#ifdef __AMIGA__
-	static inline
-#endif
 	void wall_addAdjoinSegment(s32 length, s32 x0, fixed16_16 top_dydx, fixed16_16 y1, fixed16_16 bot_dydx, fixed16_16 y0, RWallSegmentFixed* wallSegment);
 
 	// Column rendering functions that can be chosen at runtime.
@@ -79,17 +72,17 @@ namespace RClassic_Fixed
 
 	typedef void(*ColumnFunction)();
 #ifdef __AMIGA__
-	void drawColumnS_Fullbright();
-	void drawColumnS_Lit();
-	void drawColumnS_Fullbright_Trans();
-	void drawColumnS_Lit_Trans();
+	void drawColumnS_Fullbright_c();
+	void drawColumnS_Lit_c();
+	void drawColumnS_Fullbright_Trans_c();
+	void drawColumnS_Lit_Trans_c();
 
 	ColumnFunction s_columnFunc[COLFUNC_COUNT] =
 	{
-		drawColumnS_Fullbright,			// COLFUNC_FULLBRIGHT
-		drawColumnS_Lit,					// COLFUNC_LIT
-		drawColumnS_Fullbright_Trans,	// COLFUNC_FULLBRIGHT_TRANS
-		drawColumnS_Lit_Trans,			// COLFUNC_LIT_TRANS
+		drawColumnS_Fullbright_c,			// COLFUNC_FULLBRIGHT
+		drawColumnS_Lit_c,					// COLFUNC_LIT
+		drawColumnS_Fullbright_Trans_c,	// COLFUNC_FULLBRIGHT_TRANS
+		drawColumnS_Lit_Trans_c,			// COLFUNC_LIT_TRANS
 	};
 #else
 	ColumnFunction s_columnFunc[COLFUNC_COUNT] =
@@ -107,7 +100,7 @@ namespace RClassic_Fixed
 	fixed16_16 frustumIntersect(fixed16_16 x0, fixed16_16 z0, fixed16_16 x1, fixed16_16 z1, fixed16_16 dx, fixed16_16 dz)
 	{
 		fixed16_16 xz;
-#if defined(__AMIGA__) && defined(__mc68060__)
+#if defined(__AMIGA__) && defined(TFE_HAVE_FPU)
 		// this is closer to the original behavior when an overflow happens
 		xz = floatToFixed16(fixed16ToFloat(x0) * fixed16ToFloat(z1) - fixed16ToFloat(z0) * fixed16ToFloat(x1));
 #else
@@ -758,7 +751,7 @@ namespace RClassic_Fixed
 		return signTex;
 	}
 
-	void wall_drawSolid(RWallSegmentFixed* wallSegment)
+	void wall_drawSolid_c(RWallSegmentFixed* wallSegment)
 	{
 		RWall* srcWall = wallSegment->srcWall;
 		RSector* sector = srcWall->sector;
@@ -964,7 +957,7 @@ namespace RClassic_Fixed
 		srcWall->seen = JTRUE;
 	}
 
-	void wall_drawTransparent(RWallSegmentFixed* wallSegment, EdgePairFixed* edge)
+	void wall_drawTransparent_c(RWallSegmentFixed* wallSegment, EdgePairFixed* edge)
 	{
 		RWall* srcWall = wallSegment->srcWall;
 		RSector* sector = srcWall->sector;
@@ -1188,7 +1181,7 @@ namespace RClassic_Fixed
 		srcWall->seen = JTRUE;
 	}
 
-	void wall_drawBottom(RWallSegmentFixed* wallSegment)
+	void wall_drawBottom_c(RWallSegmentFixed* wallSegment)
 	{
 		RWall* wall = wallSegment->srcWall;
 		RSector* sector = wall->sector;
@@ -1463,7 +1456,7 @@ namespace RClassic_Fixed
 		wall->seen = JTRUE;
 	}
 
-	void wall_drawTop(RWallSegmentFixed* wallSegment)
+	void wall_drawTop_c(RWallSegmentFixed* wallSegment)
 	{
 		RWall* srcWall = wallSegment->srcWall;
 		RSector* sector = srcWall->sector;
@@ -1726,7 +1719,7 @@ namespace RClassic_Fixed
 		srcWall->seen = JTRUE;
 	}
 
-	void wall_drawTopAndBottom(RWallSegmentFixed* wallSegment)
+	void wall_drawTopAndBottom_c(RWallSegmentFixed* wallSegment)
 	{
 		RWall* srcWall = wallSegment->srcWall;
 		RSector* sector = srcWall->sector;
@@ -2338,7 +2331,7 @@ namespace RClassic_Fixed
 	}
 	
 	// Solve for perspective correct Z at the current x pixel coordinate.
-	fixed16_16 solveForZ(RWallSegmentFixed* wallSegment, s32 x, fixed16_16 numerator, fixed16_16* outViewDx/*=nullptr*/)
+	fixed16_16 solveForZ_c(RWallSegmentFixed* wallSegment, s32 x, fixed16_16 numerator, fixed16_16* outViewDx/*=nullptr*/)
 	{
 		fixed16_16 z;	// perspective correct z coordinate at the current x pixel coordinate.
 		if (wallSegment->orient == WORIENT_DZ_DX)
@@ -2371,7 +2364,7 @@ namespace RClassic_Fixed
 		return z;
 	}
 
-	void drawColumn_Fullbright()
+	void drawColumn_Fullbright_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2389,7 +2382,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void drawColumn_Lit()
+	void drawColumn_Lit_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2407,7 +2400,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void drawColumn_Fullbright_Trans()
+	void drawColumn_Fullbright_Trans_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2425,7 +2418,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void drawColumn_Lit_Trans()
+	void drawColumn_Lit_Trans_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2444,7 +2437,7 @@ namespace RClassic_Fixed
 	}
 
 #ifdef __AMIGA__
-	void drawColumnS_Fullbright()
+	void drawColumnS_Fullbright_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2462,7 +2455,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void drawColumnS_Lit()
+	void drawColumnS_Lit_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2480,7 +2473,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	void drawColumnS_Fullbright_Trans()
+	void drawColumnS_Fullbright_Trans_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -2635,7 +2628,7 @@ namespace RClassic_Fixed
 #endif
 	}
 
-	void drawColumnS_Lit_Trans()
+	void drawColumnS_Lit_Trans_c()
 	{
 		fixed16_16 vCoordFixed = s_vCoordFixed;
 		u8* tex = s_texImage;
@@ -3096,6 +3089,54 @@ namespace RClassic_Fixed
 			s_drawnObj[s_drawnObjCount++] = obj;
 		}
 	}
-}  // RClassic_Fixed
 
-}  // TFE_Jedi
+extern "C"
+{
+    s32 *g_asm_texHeightMask = &s_texHeightMask;
+    s32 *g_asm_yPixelCount = &s_yPixelCount;
+    fixed16_16 *g_asm_vCoordStep = &s_vCoordStep;
+    fixed16_16 *g_asm_vCoordFixed = &s_vCoordFixed;
+    const u8 **g_asm_columnLight = &s_columnLight;
+    u8 **g_asm_texImage = &s_texImage;
+    u8 **g_asm_columnOut = &s_columnOut;
+    s32 *g_asm_xPixelCount = &s_xPixelCount;
+
+    s32 **g_asm_columnTop = &s_columnTop;
+    s32 **g_asm_columnBot = &s_columnBot;
+    s32 **g_asm_windowTop = &s_windowTop;
+    s32 **g_asm_windowBot = &s_windowBot;
+    u8 **g_asm_display = &s_display;
+    s32 *g_asm_windowMaxY = &s_windowMaxY_Pixels;
+    s32 *g_asm_windowMinY = &s_windowMinY_Pixels;
+
+    fixed16_16 g_asm_solveForZ_Numerator(RWallSegmentFixed *ws) { return solveForZ_Numerator(ws); }
+
+    void g_asm_drawColumn_Lit() { drawColumn_Lit(); }
+
+    void g_asm_drawColumn_Fullbright() { drawColumn_Fullbright(); }
+
+    void g_asm_drawColumn_Lit_Trans() { drawColumn_Lit_Trans(); }
+
+    void g_asm_drawColumn_Fullbright_Trans() { drawColumn_Fullbright_Trans(); }
+
+    const u8 *g_asm_computeLighting(fixed16_16 depth, s32 lightOffset) { return computeLighting(depth, lightOffset); }
+
+    void g_asm_flat_addEdges(s32 length, s32 x0, fixed16_16 dyFloor_dx, fixed16_16 yFloor, fixed16_16 dyCeil_dx, fixed16_16 yCeil)
+    {
+        flat_addEdges(length, x0, dyFloor_dx, yFloor, dyCeil_dx, yCeil);
+    }
+
+    TextureData *g_asm_setupSignTexture(RWall *srcWall, fixed16_16 *signU0, fixed16_16 *signU1, ColumnFunction *signFullbright, ColumnFunction *signLit)
+    {
+        return setupSignTexture(srcWall, signU0, signU1, signFullbright, signLit);
+    }
+
+    void g_asm_wall_addAdjoinSegment(s32 length, s32 x0, fixed16_16 top_dydx, fixed16_16 y1, fixed16_16 bot_dydx, fixed16_16 y0, RWallSegmentFixed *wallSegment)
+    {
+        wall_addAdjoinSegment(length, x0, top_dydx, y1, bot_dydx, y0, wallSegment);
+    }
+}
+
+} // namespace RClassic_Fixed
+
+} // namespace TFE_Jedi

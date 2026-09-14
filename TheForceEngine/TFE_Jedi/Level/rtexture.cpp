@@ -535,7 +535,7 @@ namespace TFE_Jedi
 
 		if (frameRate)
 		{
-			anim->delay = time_frameRateToDelay(frameRate);	// Delay is in "ticks."
+			anim->delay = time_frameRateToDelay((u32)frameRate);	// Delay is in "ticks."
 			anim->nextTick = 0;
 			*texture = anim->frameList[0];
 		}

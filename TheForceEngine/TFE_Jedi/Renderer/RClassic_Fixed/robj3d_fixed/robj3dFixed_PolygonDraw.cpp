@@ -14,6 +14,7 @@
 #include "../rclassicFixedSharedState.h"
 #include "../rlightingFixed.h"
 #include "../../rcommon.h"
+#include "amiga/renderer_asm.h"
 #ifdef __AMIGA__
 #define s_width (320)
 #define s_height (200)
@@ -466,5 +467,20 @@ namespace RClassic_Fixed
 			}
 		}
 	}
+
+extern "C"
+{
+    s32 *g_asm_s_columnHeight = &s_columnHeight;
+    u8 **g_asm_s_pcolumnOut = &s_pcolumnOut;
+    u8 *g_asm_s_polyColorIndex = &s_polyColorIndex;
+    const u8 **g_asm_s_polyColorMap = &s_polyColorMap;
+    TextureData **g_asm_s_polyTexture = &s_polyTexture;
+    fixed16_16 *g_asm_s_col_I0 = &s_col_I0;
+    fixed16_16 *g_asm_s_col_dIdY = &s_col_dIdY;
+    vec2_fixed *g_asm_s_col_Uv0 = &s_col_Uv0;
+    vec2_fixed *g_asm_s_col_dUVdY = &s_col_dUVdY;
+    s32 *g_asm_s_dither = &s_dither;
+    fixed16_16 *g_asm_s_ditherOffset = &s_ditherOffset;
+}
 
 }}  // TFE_Jedi

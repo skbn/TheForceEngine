@@ -188,8 +188,8 @@ namespace TFE_DarkForces
 
 	void lrect_clipPoint(LRect* rect, s16* x, s16* y)
 	{
-		*x = clamp(*x, rect->left, rect->right);
-		*y = clamp(*y, rect->top,  rect->bottom);
+		*x = (s16)clamp((s32)*x, (s32)rect->left, (s32)rect->right);
+		*y = (s16)clamp((s32)*y, (s32)rect->top,  (s32)rect->bottom);
 	}
 
 	JBool lrect_isPointInside(LRect* rect, s16 x, s16 y)

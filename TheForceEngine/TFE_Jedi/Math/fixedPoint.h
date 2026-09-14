@@ -36,7 +36,7 @@ namespace TFE_Jedi
 	
 	// multiplies 2 fixed point numbers, the result is fixed point.
 	// 16.16 * 16.16 overflows 32 bit, so the calculation is done in 64 bit and then shifted back to 32 bit.
-#if defined(__AMIGA__) && defined(__mc68060__)
+#if defined(__AMIGA__) && defined(TFE_HAVE_FPU)
 #ifdef CLIB_DEBUG_PROTOS_H
 	inline fixed16_16 mul16_fix(fixed16_16 x, fixed16_16 y)
 	{
@@ -92,7 +92,7 @@ namespace TFE_Jedi
 
 	// divides 2 fixed point numbers, the result is fixed point.
 	// 16.16 * FIXED_ONE overflows 32 bit, so the calculation is done in 64 bit but the result can be safely cast back to 32 bit.
-#if defined(__AMIGA__) && defined(__mc68060__)
+#if defined(__AMIGA__) && defined(TFE_HAVE_FPU)
 	inline fixed16_16 div16(fixed16_16 num, fixed16_16 denom)
 	{
 		const f64 num64 = f64(num);

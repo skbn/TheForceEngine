@@ -1,33 +1,70 @@
 CC := m68k-amigaos-gcc
 CXX := m68k-amigaos-g++
-AS := vasmm68k_mot -I/opt/amiga/m68k-amigaos/ndk-include -Faout -m68020
+
 STRIP := m68k-amigaos-strip
 RM := rm -f
 
-CPU ?= 060
+CPU ?= 030
+FPU ?= 0
+
 ifeq ($(CPU),060)
-ARCH = -m68060 -mhard-float
+ARCH = -m68060
+AS_CPU = -m68060
+else ifeq ($(CPU),040)
+ARCH = -m68040
+AS_CPU = -m68040
+else ifeq ($(CPU),030)
+ARCH = -m68030
+AS_CPU = -m68030
+else ifeq ($(CPU),020)
+ARCH = -m68020
+AS_CPU = -m68020
 else
-ARCH = -m68040 -mhard-float
+$(error Unsupported CPU=$(CPU). Use 020, 030, 040 or 060)
 endif
 
+ifeq ($(FPU),1)
+ARCH += -mhard-float
+FPU_SUFFIX = _fpu
+else
+ARCH += -msoft-float
+FPU_SUFFIX =
+endif
+
+# Fix toolchain bug: link_cpu forces libm881 (hard-float) for 68040/060 even with -msoft-float
+ifeq ($(FPU),0)
+SPECS_FLAG := -specs=softfloat.specs
+else
+SPECS_FLAG :=
+endif
+
+ROOTDIR := $(abspath $(dir $(shell which vasmm68k_mot))/..)
+AS = vasmm68k_mot -quiet -I$(ROOTDIR)/m68k-amigaos/ndk-include -Fhunk -phxass $(AS_CPU) -opt-allbra -opt-brajmp -opt-clr -opt-div -opt-fconst -opt-jbra -opt-lsl -opt-movem -opt-mul -opt-nmoveq -opt-pea -opt-st -opt-speed -showcrit
+
 DEBUG ?= 0
-DEFINES := 
+DEFINES := -DUSE_ASM -DCPU_$(CPU)
+DEFINES +=-DQUANT_ASM
+
+ifeq ($(FPU),1)
+DEFINES += -DTFE_HAVE_FPU
+endif
 INCLUDES := -I. -Iamiga
-CFLAGS := $(ARCH) $(DEFINES) $(INCLUDES) -fno-common -noixemul
+CFLAGS := $(ARCH) $(DEFINES) $(INCLUDES) -fno-common -noixemul -fpermissive
 ifneq ($(DEBUG), 1)
-CFLAGS += -O2 -DNDEBUG -fomit-frame-pointer
+CFLAGS += -O2 -DNDEBUG -fomit-frame-pointer -fpermissive
 CFLAGS += -ffast-math -fbbb=-
-#CFLAGS += -fno-math-errno -fno-signaling-nans -fno-trapping-math -freciprocal-math -fno-peephole2 
+#CFLAGS += -fno-math-errno -fno-signaling-nans -fno-trapping-math -freciprocal-math -fno-peephole2
 else
 CFLAGS += -g -D_DEBUG
 endif
-CFLAGS += -save-temps
+#CFLAGS += -save-temps
 #CFLAGS += -fstack-usage -Wstack-usage=1024
-CFLAGS += -Wall -Wno-unused-variable -Wno-switch -Wno-sign-compare
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+CFLAGS += -Wall -Wno-unused-variable -Wno-switch -Wno-sign-compare -fpermissive
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -fpermissive
 
-LDFLAGS := -noixemul -lm $(ARCH) -ldebug # -fno-exceptions -fno-rtti
+LDFLAGS := -noixemul $(SPECS_FLAG) -lm $(ARCH) -ldebug -Wl,--noinhibit-exec # -fno-exceptions -fno-rtti
+
+OBJDIR = obj_$(CPU)$(FPU_SUFFIX)
 
 UNUSED_SRC = \
 	TFE_System/profiler.cpp \
@@ -52,7 +89,14 @@ UNUSED_SRC = \
 
 
 AMIGA_SRC = \
+	amiga/c2p1x1_8_c5_bm.s \
 	amiga/c2p1x1_8_c5_bm_040.s \
+	amiga/c2p1x1_4_c5_bm.s \
+	amiga/c2p1x1_5_c5_bm.s \
+	amiga/c2p1x1_6_c5_bm.s \
+	amiga/c2p1x1_4_c5_bm_remap.s \
+	amiga/c2p1x1_5_c5_bm_remap.s \
+	amiga/c2p1x1_6_c5_bm_remap.s \
 	amiga/audio_amiga.cpp \
 	amiga/midi_amiga.cpp \
 	amiga/render_amiga.cpp \
@@ -64,6 +108,27 @@ AMIGA_SRC = \
 	amiga/midi_doom.cpp \
 	amiga/message_amiga.cpp \
 	amiga/frontend_amiga.cpp \
+	amiga/ecs_quant_common.cpp \
+	amiga/ecs_palette.cpp \
+	amiga/ecs_quant_lloyd.cpp \
+	amiga/amiga_scalers.cpp \
+	amiga/asm/scale_asm.s \
+	amiga/asm/ecs_quant_common_asm.s \
+	amiga/asm/ecs_quant_lloyd_asm.s \
+	amiga/ecs_quant_wu.cpp \
+	amiga/asm/ecs_quant_wu_asm.s \
+	amiga/asm/solveForZ_asm.s \
+	amiga/asm/wall_drawSolid_asm.s \
+	amiga/asm/wall_drawTransparent_asm.s \
+	amiga/asm/wall_drawBottom_asm.s \
+	amiga/asm/wall_drawTop_asm.s \
+	amiga/asm/wall_drawTopAndBottom_asm.s \
+	amiga/asm/drawColumn_asm.s \
+	amiga/asm/drawColumnS_asm.s \
+	amiga/asm/drawScanline_asm.s \
+	amiga/asm/robj3d_transform_asm.s \
+	amiga/asm/robj3d_shade_asm.s \
+	amiga/asm/robj3d_drawColumn_asm.s
 
 #MAIN_SRC = \
 #	main.cpp \
@@ -279,18 +344,31 @@ SYSTEM_SRC = \
 
 
 SRCS := $(MAIN_SRC) $(AUDIO_SRC) $(INPUT_SRC) $(FRONTENDUI_SRC) $(REND_SRC) $(DARKFORCES_SRC) $(OUTLAWS_SRC) $(ASSET_SRC) $(MEMORY_SRC) $(GAME_SRC) $(JEDI_SRC) $(SETTINGS_SRC) $(ARCHIVE_SRC) $(FILESYSTEM_SRC) $(SYSTEM_SRC) $(AMIGA_SRC)
-OBJS := $(filter %.o, $(SRCS:.cpp=.o) $(SRCS:.s=.o))
+OBJS := $(addprefix $(OBJDIR)/, $(notdir $(filter %.o, $(SRCS:.cpp=.o) $(SRCS:.s=.o))))
 
+vpath %.cpp $(sort $(dir $(filter %.cpp, $(SRCS))))
+vpath %.s $(sort $(dir $(filter %.s, $(SRCS))))
 
-all: TheForceEngine.$(CPU)
+TARGET = TheForceEngine.$(CPU)$(FPU_SUFFIX)
 
-TheForceEngine.$(CPU): $(OBJS)
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
 	$(CXX) -o $@ $^ $(LDFLAGS) -Wl,-Map=$@.map
 ifneq ($(DEBUG), 1)
 	$(STRIP) $@
 endif
 
+$(OBJDIR)/%.o: %.cpp
+	@mkdir -p $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: %.s
+	@mkdir -p $(OBJDIR)
+	$(AS) $< -o $@
+
 .PHONY: clean
 
 clean:
-	$(RM) $(OBJS) TheForceEngine.$(CPU) TheForceEngine.$(CPU).map
+	$(RM) -r $(OBJDIR)
+	$(RM) $(TARGET) $(TARGET).map

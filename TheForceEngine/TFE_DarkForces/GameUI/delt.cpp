@@ -72,9 +72,9 @@ namespace TFE_DarkForces
 		u8* outColor = palette;
 		for (s32 i = first; i <= last; i++, color += 3, outColor += 3)
 		{
-			outColor[0] = color[0];
-			outColor[1] = color[1];
-			outColor[2] = color[2];
+			outColor[0] = color[0] >> 2;
+			outColor[1] = color[1] >> 2;
+			outColor[2] = color[2] >> 2;
 		}
 
 		return JTRUE;

@@ -22,7 +22,6 @@ namespace TFE_Jedi
 		void wall_process(RWall* wall);
 		s32  wall_mergeSort(RWallSegmentFixed* segOutList, s32 availSpace, s32 start, s32 count);
 
-		void wall_drawSolid(RWallSegmentFixed* wallSegment);
 		void wall_drawTransparent(RWallSegmentFixed* wallSegment, EdgePairFixed* edge);
 		void wall_drawMask(RWallSegmentFixed* wallSegment);
 		void wall_drawBottom(RWallSegmentFixed* wallSegment);

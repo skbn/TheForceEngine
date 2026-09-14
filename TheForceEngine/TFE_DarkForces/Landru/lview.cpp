@@ -268,8 +268,8 @@ namespace TFE_DarkForces
 		s16 yVel = y - s_view->yRel[viewIndex];
 		if (!snap)
 		{
-			xVel = clamp(xVel, -s_view->maxTrackXVel[viewIndex], s_view->maxTrackXVel[viewIndex]);
-			yVel = clamp(yVel, -s_view->maxTrackYVel[viewIndex], s_view->maxTrackYVel[viewIndex]);
+			xVel = (s16)clamp((s32)xVel, -(s32)s_view->maxTrackXVel[viewIndex], (s32)s_view->maxTrackXVel[viewIndex]);
+			yVel = (s16)clamp((s32)yVel, -(s32)s_view->maxTrackYVel[viewIndex], (s32)s_view->maxTrackYVel[viewIndex]);
 		}
 
 		// Finally update the position.

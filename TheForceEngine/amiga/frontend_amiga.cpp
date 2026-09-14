@@ -48,7 +48,7 @@ namespace TFE_FrontEndUI
 				5078a0
 				*/
 				GetRGB32(screen->ViewPort.ColorMap, 0, 1, pen0Color);
-				penCount = TFE_Jedi::min(NUMDRIPENS, dri->dri_NumPens);
+				penCount = TFE_Jedi::min((s32)NUMDRIPENS, (s32)dri->dri_NumPens);
 				for (int i = 0; i < penCount; i++)
 				{
 					UWORD pen = dri->dri_Pens[i];

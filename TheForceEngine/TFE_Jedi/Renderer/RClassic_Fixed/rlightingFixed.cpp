@@ -77,4 +77,16 @@ namespace RClassic_Fixed
 	}
 }  // RLightingFixed
 
+extern "C"
+{
+    s32 *g_asm_s_sectorAmbient = &s_sectorAmbient;
+    s32 *g_asm_s_scaledAmbient = &s_scaledAmbient;
+    s32 *g_asm_s_cameraLightSource = &s_cameraLightSource;
+    s32 *g_asm_s_worldAmbient = &s_worldAmbient;
+    s32 *g_asm_s_sectorAmbientFraction = &s_sectorAmbientFraction;
+    s32 *g_asm_s_lightCount = &s_lightCount;
+    const u8 **g_asm_s_lightSourceRamp = &s_lightSourceRamp;
+    void *g_asm_s_cameraLight = RClassic_Fixed::s_cameraLight;
+}
+
 }  // TFE_Jedi

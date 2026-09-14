@@ -130,7 +130,9 @@ namespace TFE_Jedi
 	void vfb_setPalette(const u32* palette)
 	{
 		memcpy(s_palette, palette, sizeof(u32) * 256);
+		
 		TFE_RenderBackend::setPalette(palette);
+		TFE_RenderBackend::setBasePalette(palette);
 	}
 
 	void vfb_setMode(FramebufferMode mode)

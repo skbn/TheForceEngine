@@ -36,6 +36,10 @@
 #include <TFE_System/system.h>
 #include <TFE_Input/inputMapping.h>
 
+#ifdef __AMIGA__
+#include "amiga/ecs_palette.h"
+#endif
+
 using namespace TFE_Jedi;
 using namespace TFE_Input;
 
@@ -260,6 +264,10 @@ namespace TFE_DarkForces
 			s_levelColorMap = color_loadMap(&filePath, s_levelLightRamp, &s_levelColorMapBasePtr);
 		}
 		setCurrentColorMap(s_levelColorMap, s_levelLightRamp);
+		
+#ifdef __AMIGA__
+		ecsUpdateColormap(s_levelColorMap);
+#endif
 	}
 
 	void mission_serialize(Stream* stream)
@@ -428,6 +436,10 @@ namespace TFE_DarkForces
 		// Sleep until we are done with the main task.
 		task_yield(TASK_SLEEP);
 
+#ifdef __AMIGA__
+		ecsUpdateColormap(NULL);
+#endif
+
 		// Cleanup - shut down all tasks.
 		task_freeAll();
 
@@ -482,7 +494,9 @@ namespace TFE_DarkForces
 			TFE_Jedi::beginRender();
 
 			updateScreensize();
+
 			drawWorld(s_framebuffer, s_playerEye->sector, s_levelColorMap, s_lightSourceRamp);
+			
 			weapon_draw(s_framebuffer, (DrawRect*)vfb_getScreenRect(VFB_RECT_UI));
 			handleVisionFx();
 			handlePaletteFx();
@@ -737,13 +751,45 @@ namespace TFE_DarkForces
 			s_lumMaskChanged = JTRUE;
 		}
 	}
-		
+
 	void handlePaletteFx()
 	{
+		if (!s_canChangePal) { return; }
+
+#ifdef __AMIGA__
+		if (ecsDepth)
+		{
+			JBool anyFx = (s_luminanceMask[0] || s_luminanceMask[1] || s_luminanceMask[2] || (s_screenFxEnabled && (s_healthFxLevel || s_shieldFxLevel || s_flashFxLevel)) || (s_screenBrightnessEnabled && s_screenBrightness < ONE_16));
+
+			if (anyFx || s_palModified || s_updateHudColors)
+			{
+				TFE_RenderBackend::setBasePaletteRaw(s_basePalette);
+
+				if (anyFx)
+				{
+					TFE_RenderBackend::applyFrameFx(s_healthFxLevel, s_shieldFxLevel, s_flashFxLevel, s_luminanceMask[0], s_luminanceMask[1], s_luminanceMask[2], s_screenBrightness, s_screenFxEnabled, s_screenBrightnessEnabled);
+					s_palModified = JTRUE;
+				}
+				else
+				{
+					TFE_RenderBackend::applyFrameFx(0, 0, 0, JFALSE, JFALSE, JFALSE, ONE_16, JFALSE, JFALSE);
+					s_palModified = JFALSE;
+				}
+
+				s_updateHudColors = JFALSE;
+			}
+
+			s_lumMaskChanged = JFALSE;
+			s_screenFxChanged = JFALSE;
+			s_screenBrightnessChanged = JFALSE;
+
+			return;
+		}
+#endif
+
 		JBool useFramePal   = JFALSE;
 		JBool updateBasePal = JFALSE;
 		JBool copiedPalette = JFALSE;
-		if (!s_canChangePal) { return; }
 
 		if (s_luminanceMask[0] || s_luminanceMask[1] || s_luminanceMask[2])
 		{
@@ -834,12 +880,10 @@ namespace TFE_DarkForces
 			s_palModified = JFALSE;
 		}
 	#endif
-#ifdef __AMIGA__
 		if (!s_luminanceMask[0] && !s_luminanceMask[1] && !s_luminanceMask[2] && !s_healthFxLevel && !s_shieldFxLevel && !s_flashFxLevel && s_screenBrightness == ONE_16)
 		{
 			s_palModified = JFALSE;
 		}
-#endif
 	}
 
 	void setCurrentColorMap(u8* colorMap, u8* lightRamp)

@@ -1020,7 +1020,7 @@ namespace TFE_Settings
 		}
 		else if (strcasecmp("airControl", key) == 0)
 		{
-			s_gameSettings.df_airControl = std::min(std::max(parseInt(value), 0), 8);
+			s_gameSettings.df_airControl = std::min(std::max((s32)parseInt(value), (s32)0), (s32)8);
 		}
 		else if (strcasecmp("bobaFettFacePlayer", key) == 0)
 		{

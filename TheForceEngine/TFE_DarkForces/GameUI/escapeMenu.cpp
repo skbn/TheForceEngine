@@ -19,6 +19,14 @@
 #include <TFE_Jedi/Level/roffscreenBuffer.h>
 #include <TFE_System/system.h>
 
+#ifdef __AMIGA__
+#include "amiga/ecs_palette.h"
+#endif
+
+#ifndef CONV_6bitTo8bit
+#define CONV_6bitTo8bit(x) (((x)<<2) | ((x)>>4))
+#endif
+
 using namespace TFE_Jedi;
 using namespace TFE_Input;
 
@@ -177,7 +185,7 @@ namespace TFE_DarkForces
 			u8* pal = paletteBuffer;
 			for (u32 i = 0; i < 256; i++, pal += 3)
 			{
-				s_escMenuPalette[i] = 0xffu << 24 | ((u32)pal[0]) | ((u32)(pal[1]) << 8) | ((u32)pal[2] << 16);
+				s_escMenuPalette[i] = 0xffu << 24 | (u32)CONV_6bitTo8bit(pal[0]) | ((u32)CONV_6bitTo8bit(pal[1]) << 8) | ((u32)CONV_6bitTo8bit(pal[2]) << 16);
 			}
 		}
 	}
@@ -240,6 +248,10 @@ namespace TFE_DarkForces
 		// TFE
 		reticle_enable(false);
 		TFE_RenderBackend::bloomPostEnable(false);
+
+#ifdef __AMIGA__
+		ecsUpdateColormap(NULL);
+#endif
 
 		pauseLevelSound();
 		s_emState.escMenuOpen = JTRUE;

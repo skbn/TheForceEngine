@@ -181,7 +181,7 @@ s32 robj3d_findPrevEdge(s32 minXIndex)
 }
 
 #if !defined(POLY_INTENSITY) && !defined(POLY_UV)
-void robj3d_drawColumnFlatColor()
+void robj3d_drawColumnFlatColor_c()
 {
 	s32 end = s_columnHeight - 1;
 	s32 offset = end * s_width;
@@ -193,7 +193,7 @@ void robj3d_drawColumnFlatColor()
 #endif
 
 #if defined(POLY_INTENSITY) && !defined(POLY_UV)
-void robj3d_drawColumnShadedColor()
+void robj3d_drawColumnShadedColor_c()
 {
 	const u8* colorMap = s_polyColorMap;
 
@@ -223,7 +223,7 @@ void robj3d_drawColumnShadedColor()
 #endif
 
 #if !defined(POLY_INTENSITY) && defined(POLY_UV)
-void robj3d_drawColumnFlatTexture()
+void robj3d_drawColumnFlatTexture_c()
 {
 	const u8* colorMap = &s_polyColorMap[s_polyColorIndex * 256];
 	const u8* textureData = s_polyTexture->image;
@@ -247,7 +247,7 @@ void robj3d_drawColumnFlatTexture()
 #endif
 
 #if defined(POLY_INTENSITY) && defined(POLY_UV)
-void robj3d_drawColumnShadedTexture()
+void robj3d_drawColumnShadedTexture_c()
 {
 	const u8* colorMap = s_polyColorMap;
 	const u8* textureData = s_polyTexture->image;

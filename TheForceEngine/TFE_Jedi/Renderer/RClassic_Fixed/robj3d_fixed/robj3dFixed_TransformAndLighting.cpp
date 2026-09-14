@@ -6,6 +6,9 @@
 #include "../rlightingFixed.h"
 #include "../../rcommon.h"
 #ifdef __AMIGA__
+#include "amiga/renderer_asm.h"
+#endif
+#ifdef __AMIGA__
 #define s_width (320)
 #define s_height (200)
 #endif
@@ -36,7 +39,7 @@ namespace RClassic_Fixed
 	// Polygon normals in viewspace (used for culling).
 	std::vector<vec3_fixed> s_polygonNormalsVS;
 			
-	void robj3d_transformVertices(s32 vertexCount, vec3_fixed* vtxIn, s32* xform, vec3_fixed* offset, vec3_fixed* vtxOut)
+	void robj3d_transformVertices_c(s32 vertexCount, vec3_fixed* vtxIn, s32* xform, vec3_fixed* offset, vec3_fixed* vtxOut)
 	{
 		for (s32 v = 0; v < vertexCount; v++, vtxOut++, vtxIn++)
 		{
@@ -46,7 +49,7 @@ namespace RClassic_Fixed
 		}
 	}
 
-	fixed16_16 robj3d_dotProduct(const vec3_fixed* pos, const vec3_fixed* normal, const vec3_fixed* dir)
+	fixed16_16 robj3d_dotProduct_c(const vec3_fixed* pos, const vec3_fixed* normal, const vec3_fixed* dir)
 	{
 		fixed16_16 nx = normal->x - pos->x;
 		fixed16_16 ny = normal->y - pos->y;
@@ -63,7 +66,7 @@ namespace RClassic_Fixed
 		return ndx + ndy + ndz;
 	}
 		
-	void robj3d_shadeVertices(s32 vertexCount, fixed16_16* outShading, const vec3_fixed* vertices, const vec3_fixed* normals)
+	void robj3d_shadeVertices_c(s32 vertexCount, fixed16_16* outShading, const vec3_fixed* vertices, const vec3_fixed* normals)
 	{
 		const vec3_fixed* normal = normals;
 		const vec3_fixed* vertex = vertices;
