@@ -115,7 +115,7 @@ namespace RClassic_Fixed
 	}
 
 	// Process the wall and produce an RWallSegment for rendering if the wall is potentially visible.
-	void wall_process(RWall* wall)
+	void wall_process_c(RWall* wall)
 	{
 		const vec2_fixed* p0 = wall->v0;
 		const vec2_fixed* p1 = wall->v1;

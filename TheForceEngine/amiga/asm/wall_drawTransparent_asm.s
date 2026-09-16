@@ -180,7 +180,7 @@ wall_drawTransparent_asm:
     addq.l #1,d0
     move.l _g_asm_yPixelCount,a1
     move.l d0,(a1)
-    ble .next_dx
+    ble .next
 
     move.l a2,a0
     move.l d2,d0
@@ -234,7 +234,7 @@ wall_drawTransparent_asm:
     addq.l #1,d0
     move.l _g_asm_yPixelCount,a1
     move.l d0,(a1)
-    ble .next_dz
+    ble .next
 
     move.l a2,a0
     move.l d2,d0
@@ -260,7 +260,6 @@ wall_drawTransparent_asm:
     swap d0
     and.l TEXMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .cb_nf
     move.l TEXW(sp),d1
     sub.l d0,d1
@@ -329,34 +328,22 @@ wall_drawTransparent_asm:
     tst.l d0
     beq .cb_fb
     jsr _g_asm_drawColumn_Lit_Trans
-    bra .next_check
+    bra .next
 
 .cb_fb:
     jsr _g_asm_drawColumn_Fullbright_Trans
 
-.next_check:
+.next:
+    move.l DYDT(sp),d0
+    add.l d0,d6
+    move.l DYDB(sp),d0
+    add.l d0,d7
+    addq.l #1,d2
+    subq.l #1,d3
+    ble .done
     tst.b 20(a2)
-    beq .next_dz
-
-.next_dx:
-    move.l DYDT(sp),d0
-    add.l d0,d6
-    move.l DYDB(sp),d0
-    add.l d0,d7
-    addq.l #1,d2
-    subq.l #1,d3
-    ble .done
+    beq .loop_dz
     bra .loop_dx
-
-.next_dz:
-    move.l DYDT(sp),d0
-    add.l d0,d6
-    move.l DYDB(sp),d0
-    add.l d0,d7
-    addq.l #1,d2
-    subq.l #1,d3
-    ble .done
-    bra .loop_dz
 
 .done:
 .return:

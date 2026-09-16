@@ -21,7 +21,6 @@ lloydMax_asm:
     movem.l d2-d7/a2-a6,-(sp)
     lea -52(sp),sp
 
-    ; stash args in callee-saved regs
     move.l a2,a5
     move.w d1,d7
     subq.w #1,d7
@@ -29,11 +28,10 @@ lloydMax_asm:
     add.l d0,a3
     move.l a1,a4
 
-    ; 8 refinement passes
     move.w #7,48(sp)
 
 .outer_loop:
-    ; zero sums[8] (32 bytes) and counts[8] (16 bytes)
+    ; zero sums[8] and counts[8] on stack
     moveq #0,d0
     moveq #0,d1
     moveq #0,d2
@@ -42,18 +40,14 @@ lloydMax_asm:
     movem.l d0-d3,16(sp)
     movem.l d0-d3,32(sp)
 
-    ; counts base (update loop advances a6, reset each pass)
     lea 32(sp),a6
 
-    ; pp = p, cw = colorWeight
     move.l a3,a0
     move.l a4,a1
 
-    ; 256 palette entries
     move.w #255,d6
 
 .inner_loop:
-    ; w = *cw++
     move.w (a1)+,d5
     beq .skip
 
@@ -85,11 +79,10 @@ lloydMax_asm:
 .search_next:
     dbra d3,.search_loop
 
-    ; sums[best] += v * w
+    ; accumulate weighted sums and counts per level
     muls.w d5,d4
     add.l d4,(sp,d1.l*4)
 
-    ; counts[best] += w
     add.w d5,(a6,d1.l*2)
 
     dbra d6,.inner_loop
@@ -100,7 +93,7 @@ lloydMax_asm:
     dbra d6,.inner_loop
 
 .inner_done:
-    ; opt[j] = sums[j] / counts[j]  when counts[j] > 0
+    ; recompute centroids
     moveq #0,d3
     move.l sp,a0
 
@@ -166,7 +159,7 @@ lloyd3DRefine_asm:
 
     ; 8 refinement passes
     move.w #7,ITER(sp)
-    
+
     ; cg passed on stack
     move.l 88(sp),a5
     move.l a5,CGB(sp)
@@ -211,7 +204,7 @@ lloyd3DRefine_asm:
 
     move.w (a3)+,d3
     beq .l3d_skip
-    
+
     ; w = *cw++
     ext.l d3
     move.l d3,WSP(sp)
@@ -413,7 +406,6 @@ lloyd3DSeed_asm:
     tst.l d4
     blt .seed_fill
 
-    ; save best in d7, d4 free for centroid
     move.l d4,d7
     move.l 36(sp),d6
 

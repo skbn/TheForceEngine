@@ -296,13 +296,13 @@ void robj3d_drawColumnShadedTexture_c()
 #endif
 
 #if defined(POLY_INTENSITY) && !defined(POLY_UV)
-void robj3d_drawShadedColorPolygon(vec3_fixed* projVertices, fixed16_16* intensity, s32 vertexCount, u8 color)
+void robj3d_drawShadedColorPolygon_c(vec3_fixed* projVertices, fixed16_16* intensity, s32 vertexCount, u8 color)
 #elif !defined(POLY_INTENSITY) && defined(POLY_UV)
-void robj3d_drawFlatTexturePolygon(vec3_fixed* projVertices, vec2_fixed* uv, s32 vertexCount, TextureData* texture, u8 color)
+void robj3d_drawFlatTexturePolygon_c(vec3_fixed* projVertices, vec2_fixed* uv, s32 vertexCount, TextureData* texture, u8 color)
 #elif defined(POLY_INTENSITY) && defined(POLY_UV)
-void robj3d_drawShadedTexturePolygon(vec3_fixed* projVertices, vec2_fixed* uv, fixed16_16* intensity, s32 vertexCount, TextureData* texture)
+void robj3d_drawShadedTexturePolygon_c(vec3_fixed* projVertices, vec2_fixed* uv, fixed16_16* intensity, s32 vertexCount, TextureData* texture)
 #else
-void robj3d_drawFlatColorPolygon(vec3_fixed* projVertices, s32 vertexCount, u8 color)
+void robj3d_drawFlatColorPolygon_c(vec3_fixed* projVertices, s32 vertexCount, u8 color)
 #endif
 {
 	s32 xMax = INT_MIN;

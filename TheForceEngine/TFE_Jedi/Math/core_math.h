@@ -80,12 +80,30 @@ namespace TFE_Jedi
 
 	inline s32 signV2A(s32 x) { return (x < 0 ? 1 : 0); }
 
-	inline fixed16_16 dotFixed(vec3_fixed v0, vec3_fixed v1) { return mul16(v0.x, v1.x) + mul16(v0.y, v1.y) + mul16(v0.z, v1.z); }
+	#ifdef USE_ASM
+		extern "C" fixed16_16 dot_asm(const vec3_fixed* v0 __asm("a0"), const vec3_fixed* v1 __asm("a1"));
+		extern "C" fixed16_16 dotFixed_asm(const vec3_fixed& v0 __asm("a0"), const vec3_fixed& v1 __asm("a1"));
+		
+		inline fixed16_16 dot(const vec3_fixed* v0, const vec3_fixed* v1)
+		{ 
+			return dot_asm(v0, v1); 
+		}
+
+		inline fixed16_16 dotFixed(vec3_fixed v0, vec3_fixed v1)
+		{
+			return dotFixed_asm(v0, v1);
+		}
+	#else
+	inline fixed16_16 dotFixed(vec3_fixed v0, vec3_fixed v1)
+	{
+		return mul16(v0.x, v1.x) + mul16(v0.y, v1.y) + mul16(v0.z, v1.z);
+	}
 
 	inline fixed16_16 dot(const vec3_fixed* v0, const vec3_fixed* v1)
 	{
 		return mul16(v0->x, v1->x) + mul16(v0->y, v1->y) + mul16(v0->z, v1->z);
 	}
+	#endif
 
 	void normalizeVec3(vec3_fixed* vIn, vec3_fixed* vOut);
 	void rotateVectorM3x3(vec3_fixed* inVec, vec3_fixed* outVec, s32* mtx);

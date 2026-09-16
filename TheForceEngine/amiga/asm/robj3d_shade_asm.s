@@ -131,7 +131,6 @@ robj3d_shadeVertices_asm:
     move.l d3,d2
 
     move.l 8(a1),d3
-    tst.l d3
     bge .z_ok
     moveq #0,d3
 
@@ -140,7 +139,6 @@ robj3d_shadeVertices_asm:
     cmp.l #31,d0
     blt .do_ramp
     move.l 20(sp),d0
-    tst.l d0
     beq .skip_ramp
 
 .do_ramp:

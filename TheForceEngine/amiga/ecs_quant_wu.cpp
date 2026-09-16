@@ -28,14 +28,7 @@ int32_t wuG2[33][33][33];
 int32_t wuB2[33][33][33];
 
 #define WU_BOX_SUM32(p, r1, r2, g1, g2, b1, b2) \
-    (p[(r2)+1][(g2)+1][(b2)+1] \
-   - p[(r1)][(g2)+1][(b2)+1] \
-   - p[(r2)+1][(g1)][(b2)+1] \
-   - p[(r2)+1][(g2)+1][(b1)] \
-   + p[(r1)][(g1)][(b2)+1] \
-   + p[(r1)][(g2)+1][(b1)] \
-   + p[(r2)+1][(g1)][(b1)] \
-   - p[(r1)][(g1)][(b1)])
+    (p[(r2) + 1][(g2) + 1][(b2) + 1] - p[(r1)][(g2) + 1][(b2) + 1] - p[(r2) + 1][(g1)][(b2) + 1] - p[(r2) + 1][(g2) + 1][(b1)] + p[(r1)][(g1)][(b2) + 1] + p[(r1)][(g2) + 1][(b1)] + p[(r2) + 1][(g1)][(b1)] - p[(r1)][(g1)][(b1)])
 
 #ifdef QUANT_ASM
 extern "C"
@@ -115,6 +108,7 @@ void wuComputeMoments_c(const uint8 *palette, const int16_t *colorWeight)
         int r = p[0] >> 3;
         int g = p[1] >> 3;
         int b = p[2] >> 3;
+
         p += 3;
 
         int r2 = r * r;
@@ -126,6 +120,7 @@ void wuComputeMoments_c(const uint8 *palette, const int16_t *colorWeight)
         wR[idx] += r * w;
         wG[idx] += g * w;
         wB[idx] += b * w;
+
         wR2[idx] += r2 * w;
         wG2[idx] += g2 * w;
         wB2[idx] += b2 * w;

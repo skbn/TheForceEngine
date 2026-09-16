@@ -27,27 +27,25 @@
 ; drawScanline_Lit_asm()
 _drawScanline_Lit_asm:
 drawScanline_Lit_asm:
-    movem.l d2-d6/a2,-(sp)
+    movem.l d2-d7/a2,-(sp)
+
+    moveq #10,d7
 
     move.l _g_asm_scanlineV0,a0
     move.l (a0),d1
-    lsl.l #8,d1
-    lsl.l #2,d1
+    lsl.l d7,d1
 
     move.l _g_asm_scanlineU0,a0
     move.l (a0),d0
-    lsl.l #8,d0
-    lsl.l #2,d0
+    lsl.l d7,d0
 
     move.l _g_asm_scanline_dVdX,a0
     move.l (a0),d3
-    lsl.l #8,d3
-    lsl.l #2,d3
+    lsl.l d7,d3
 
     move.l _g_asm_scanline_dUdX,a0
     move.l (a0),d2
-    lsl.l #8,d2
-    lsl.l #2,d2
+    lsl.l d7,d2
 
     move.l _g_asm_scanlineWidth,a0
     move.l (a0),d6
@@ -63,13 +61,11 @@ drawScanline_Lit_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -83,13 +79,11 @@ drawScanline_Lit_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -98,33 +92,31 @@ drawScanline_Lit_asm:
     dbra d6,.lt_loop
 
 .lt_done:
-    movem.l (sp)+,d2-d6/a2
+    movem.l (sp)+,d2-d7/a2
     rts
 
 ; drawScanline_Fullbright_asm()
 _drawScanline_Fullbright_asm:
 drawScanline_Fullbright_asm:
-    movem.l d2-d6,-(sp)
+    movem.l d2-d7,-(sp)
+
+    moveq #10,d7
 
     move.l _g_asm_scanlineV0,a0
     move.l (a0),d1
-    lsl.l #8,d1
-    lsl.l #2,d1
+    lsl.l d7,d1
 
     move.l _g_asm_scanlineU0,a0
     move.l (a0),d0
-    lsl.l #8,d0
-    lsl.l #2,d0
+    lsl.l d7,d0
 
     move.l _g_asm_scanline_dVdX,a0
     move.l (a0),d3
-    lsl.l #8,d3
-    lsl.l #2,d3
+    lsl.l d7,d3
 
     move.l _g_asm_scanline_dUdX,a0
     move.l (a0),d2
-    lsl.l #8,d2
-    lsl.l #2,d2
+    lsl.l d7,d2
 
     move.l _g_asm_scanlineWidth,a0
     move.l (a0),d6
@@ -138,13 +130,11 @@ drawScanline_Fullbright_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -156,13 +146,11 @@ drawScanline_Fullbright_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -171,33 +159,31 @@ drawScanline_Fullbright_asm:
     dbra d6,.fb_loop
 
 .fb_done:
-    movem.l (sp)+,d2-d6
+    movem.l (sp)+,d2-d7
     rts
 
 ; drawScanline_Trans_asm()
 _drawScanline_Trans_asm:
 drawScanline_Trans_asm:
-    movem.l d2-d6/a2,-(sp)
+    movem.l d2-d7/a2,-(sp)
+
+    moveq #10,d7
 
     move.l _g_asm_scanlineV0,a0
     move.l (a0),d1
-    lsl.l #8,d1
-    lsl.l #2,d1
+    lsl.l d7,d1
 
     move.l _g_asm_scanlineU0,a0
     move.l (a0),d0
-    lsl.l #8,d0
-    lsl.l #2,d0
+    lsl.l d7,d0
 
     move.l _g_asm_scanline_dVdX,a0
     move.l (a0),d3
-    lsl.l #8,d3
-    lsl.l #2,d3
+    lsl.l d7,d3
 
     move.l _g_asm_scanline_dUdX,a0
     move.l (a0),d2
-    lsl.l #8,d2
-    lsl.l #2,d2
+    lsl.l d7,d2
 
     move.l _g_asm_scanlineWidth,a0
     move.l (a0),d6
@@ -213,13 +199,11 @@ drawScanline_Trans_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -235,13 +219,11 @@ drawScanline_Trans_asm:
 .tr_skip:
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -250,33 +232,31 @@ drawScanline_Trans_asm:
     dbra d6,.tr_loop
 
 .tr_done:
-    movem.l (sp)+,d2-d6/a2
+    movem.l (sp)+,d2-d7/a2
     rts
 
 ; drawScanline_Fullbright_Trans_asm()
 _drawScanline_Fullbright_Trans_asm:
 drawScanline_Fullbright_Trans_asm:
-    movem.l d2-d6,-(sp)
+    movem.l d2-d7,-(sp)
+
+    moveq #10,d7
 
     move.l _g_asm_scanlineV0,a0
     move.l (a0),d1
-    lsl.l #8,d1
-    lsl.l #2,d1
+    lsl.l d7,d1
 
     move.l _g_asm_scanlineU0,a0
     move.l (a0),d0
-    lsl.l #8,d0
-    lsl.l #2,d0
+    lsl.l d7,d0
 
     move.l _g_asm_scanline_dVdX,a0
     move.l (a0),d3
-    lsl.l #8,d3
-    lsl.l #2,d3
+    lsl.l d7,d3
 
     move.l _g_asm_scanline_dUdX,a0
     move.l (a0),d2
-    lsl.l #8,d2
-    lsl.l #2,d2
+    lsl.l d7,d2
 
     move.l _g_asm_scanlineWidth,a0
     move.l (a0),d6
@@ -290,13 +270,11 @@ drawScanline_Fullbright_Trans_asm:
 
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -310,13 +288,11 @@ drawScanline_Fullbright_Trans_asm:
 .ft_skip:
     move.l d0,d4
     swap d4
-    lsr.w #8,d4
-    lsr.w #2,d4
+    lsr.w d7,d4
     lsl.w #6,d4
     move.l d1,d5
     swap d5
-    lsr.w #8,d5
-    lsr.w #2,d5
+    lsr.w d7,d5
     add.w d5,d4
 
     add.l d2,d0
@@ -325,5 +301,5 @@ drawScanline_Fullbright_Trans_asm:
     dbra d6,.ft_loop
 
 .ft_done:
-    movem.l (sp)+,d2-d6
+    movem.l (sp)+,d2-d7
     rts

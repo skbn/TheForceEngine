@@ -405,7 +405,7 @@ wall_drawSolid_asm:
     move.l d4,DXV(sp)
 
     move.l d5,d0
-    ble .next_dx
+    ble .cb_done
     bra .col_body
 
 .loop_dz:
@@ -473,7 +473,7 @@ wall_drawSolid_asm:
     move.l d4,DXV(sp)
 
     move.l d5,d0
-    ble .next_dz
+    ble .cb_done
     bra .col_body
 
 .col_body:
@@ -481,7 +481,6 @@ wall_drawSolid_asm:
     swap d0
     and.l TEXMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .cb_nf
     move.l TEXW(sp),d1
     sub.l d0,d1
@@ -674,7 +673,6 @@ wall_drawSolid_asm:
     move.l d0,(a0)
 
     move.l (a6),d0
-    tst.l d0
     beq .sg_fb
     move.l SLIT(sp),a0
     jsr (a0)
@@ -690,28 +688,16 @@ wall_drawSolid_asm:
     move.l d0,(a0)
 
 .cb_done:
+    move.l DYDT(sp),d0
+    add.l d0,d6
+    move.l DYDB(sp),d0
+    add.l d0,d7
+    addq.l #1,d2
+    subq.l #1,d3
+    ble .done
     tst.b 20(a2)
-    beq .next_dz
-
-.next_dx:
-    move.l DYDT(sp),d0
-    add.l d0,d6
-    move.l DYDB(sp),d0
-    add.l d0,d7
-    addq.l #1,d2
-    subq.l #1,d3
-    ble .done
+    beq .loop_dz
     bra .loop_dx
-
-.next_dz:
-    move.l DYDT(sp),d0
-    add.l d0,d6
-    move.l DYDB(sp),d0
-    add.l d0,d7
-    addq.l #1,d2
-    subq.l #1,d3
-    ble .done
-    bra .loop_dz
 
 .done:
     moveq #-1,d0

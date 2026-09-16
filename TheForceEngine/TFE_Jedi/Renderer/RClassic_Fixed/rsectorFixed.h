@@ -28,6 +28,6 @@ namespace TFE_Jedi
 		void saveValues(s32 index);
 		void restoreValues(s32 index);
 		void adjoin_computeWindowBounds(EdgePairFixed* adjoinEdges);
-		void adjoin_setupAdjoinWindow(s32* winBot, s32* winBotNext, s32* winTop, s32* winTopNext, EdgePairFixed* adjoinEdges, s32 adjoinCount);
+		void adjoin_setupAdjoinWindow_c(s32* winBot, s32* winBotNext, s32* winTop, s32* winTopNext, EdgePairFixed* adjoinEdges, s32 adjoinCount);
 	};
 }  // TFE_Jedi

@@ -19,11 +19,11 @@ extern "C"
     void scale2x_asm(const uint8_t *src __asm("a0"), uint8_t *dst __asm("a1"), int displayWidth __asm("d0"));
 }
 
-    #define scaleNearest2x scaleNearest2x_asm
-    #define scale2x scale2x_asm
+#define scaleNearest2x scaleNearest2x_asm
+#define scale2x scale2x_asm
 #else
-    #define scaleNearest2x scaleNearest2x_c
-    #define scale2x scale2x_c
+#define scaleNearest2x scaleNearest2x_c
+#define scale2x scale2x_c
 #endif
 
 #endif

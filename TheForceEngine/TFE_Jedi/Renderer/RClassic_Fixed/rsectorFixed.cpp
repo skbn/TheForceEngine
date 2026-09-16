@@ -538,7 +538,7 @@ namespace TFE_Jedi
 		s_curSector->prevDrawFrame2 = s_drawFrame;
 	}
 		
-	void TFE_Sectors_Fixed::adjoin_setupAdjoinWindow(s32* winBot, s32* winBotNext, s32* winTop, s32* winTopNext, EdgePairFixed* adjoinEdges, s32 adjoinCount)
+	void TFE_Sectors_Fixed::adjoin_setupAdjoinWindow_c(s32* winBot, s32* winBotNext, s32* winTop, s32* winTopNext, EdgePairFixed* adjoinEdges, s32 adjoinCount)
 	{
 		TFE_ZONE("Setup Adjoin Window");
 

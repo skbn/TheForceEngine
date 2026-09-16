@@ -96,6 +96,7 @@ static struct Window *window = NULL;
 static struct Screen *screen = NULL;
 static unsigned char ppal[256 * 4];
 static ULONG spal[1 + (256 * 3) + 1];
+static uint8_t s_rtgPal[256 * 3];
 static int updatePalette = FALSE;
 static int use_c2p = FALSE;
 static int use_c2p_040 = FALSE;
@@ -180,7 +181,7 @@ static void showframe(void)
     if (screen)
     {
         currentBitMap ^= 1;
-        
+
         if (use_c2p)
         {
             if (ecsDepth == 4)
@@ -277,10 +278,13 @@ static void showframe(void)
 #ifdef BENCHMARK
         {
             struct RastPort *rp = &temprp;
+
             temprp.BitMap = sbuf[currentBitMap]->sb_BitMap;
+
             BE_ST_DebugText(rp, 0, 16, "t1 %2d t2 %2d t3 %2d t4 %2d t5 %2d t6 %2d", t1, t2, t3, t4, t5, t6);
         }
 #endif
+
         if (dispport)
         {
             if (!safetochange)
@@ -290,23 +294,11 @@ static void showframe(void)
 
                 safetochange = TRUE;
             }
-        } /*else {
-                WaitTOF();
-        }*/
+        }
+
         if (ChangeScreenBuffer(screen, sbuf[currentBitMap]))
-        {
             safetochange = FALSE;
-        }
-        /*
-        {
-                FileStream file;
-                if (file.open("chunky.bin", Stream::MODE_WRITE))
-                {
-                        file.writeBuffer(s_curFrameBuffer, s_virtualWidth*s_virtualHeight);
-                        file.close();
-                }
-        }
-        */
+
         if (updatePalette)
         {
             if (ecsDepth && use_c2p)
@@ -329,18 +321,7 @@ static void showframe(void)
             }
             else
                 LoadRGB32(&screen->ViewPort, spal);
-            /*
-            if (!TFE_Input::relativeModeEnabled())
-            {
-                    // update the colormap too if we are in the menu
-                    ULONG *sp = &spal[1];
-                    for (int i = 0; i < 256; i++)
-                    {
-                            //SetRGB32(&screen->ViewPort, i, *sp++, *sp++, *sp++);
-                            SetRGB32CM(screen->ViewPort.ColorMap, i, *sp++, *sp++, *sp++);
-                    }
-            }
-            */
+
             updatePalette = FALSE;
         }
     }
@@ -370,7 +351,8 @@ static void shutdownvideo(void)
             safetochange = TRUE;
         }
 
-        while (GetMsg(dispport));
+        while (GetMsg(dispport))
+            ;
     }
 
     if (sbuf[0])
@@ -418,8 +400,6 @@ static int setvideomode(int x, int y, int c, int fs)
     ULONG flags, idcmp;
 
     shutdownvideo();
-
-    // buildprintf("Setting video mode %dx%d (%d-bpp %s)\n", x,y,c,(fs & 1) ? "fullscreen" : "windowed");
 
     if (fs)
     {
@@ -527,14 +507,13 @@ static int setvideomode(int x, int y, int c, int fs)
 
         currentBitMap = 0;
         use_c2p = FALSE;
+
         InitRastPort(&temprp);
 
         if ((sbuf[0] = AllocScreenBuffer(screen, 0, SB_SCREEN_BITMAP)) && (sbuf[1] = AllocScreenBuffer(screen, 0, SB_COPY_BITMAP)))
         {
             if ((GetBitMapAttr(screen->RastPort.BitMap, BMA_FLAGS) & BMF_STANDARD) != 0)
-            {
                 use_c2p = TRUE;
-            }
 
             safetochange = TRUE;
 
@@ -845,17 +824,27 @@ void setPalette(const u32 *palette)
         if (!(ecsDepth && use_c2p))
         {
             ULONG *sp = &spal[1];
+            uint8_t *rp = s_rtgPal;
 
             spal[0] = (256 << 16) | 0;
 
             if (s_colorCorrection)
             {
                 u8 *gammaTable = s_gammaTable;
+
                 for (int i = 0; i < 256; i++)
                 {
-                    *sp++ = (ULONG)gammaTable[palrgba[3]] << 24;
-                    *sp++ = (ULONG)gammaTable[palrgba[2]] << 24;
-                    *sp++ = (ULONG)gammaTable[palrgba[1]] << 24;
+                    uint8_t r = gammaTable[palrgba[3]];
+                    uint8_t g = gammaTable[palrgba[2]];
+                    uint8_t b = gammaTable[palrgba[1]];
+
+                    *sp++ = (ULONG)r << 24;
+                    *sp++ = (ULONG)g << 24;
+                    *sp++ = (ULONG)b << 24;
+
+                    *rp++ = r;
+                    *rp++ = g;
+                    *rp++ = b;
 
                     palrgba += 4;
                 }
@@ -864,9 +853,17 @@ void setPalette(const u32 *palette)
             {
                 for (int i = 0; i < 256; i++)
                 {
-                    *sp++ = (ULONG)palrgba[3] << 24;
-                    *sp++ = (ULONG)palrgba[2] << 24;
-                    *sp++ = (ULONG)palrgba[1] << 24;
+                    uint8_t r = palrgba[3];
+                    uint8_t g = palrgba[2];
+                    uint8_t b = palrgba[1];
+
+                    *sp++ = (ULONG)r << 24;
+                    *sp++ = (ULONG)g << 24;
+                    *sp++ = (ULONG)b << 24;
+
+                    *rp++ = r;
+                    *rp++ = g;
+                    *rp++ = b;
 
                     palrgba += 4;
                 }
@@ -904,7 +901,6 @@ void setBasePaletteRaw(const u8 *palette768)
 {
     if (screen && ecsDepth && use_c2p)
     {
-        // ecsUpdatePaletteRaw(palette768);
         u8 scaled[768];
 
         for (int i = 0; i < 768; i++)
@@ -921,7 +917,6 @@ void applyFrameFx(s32 healthFx, s32 shieldFx, s32 flashFx, JBool lumR, JBool lum
     if (screen && ecsDepth && use_c2p)
     {
         ecsApplyFrameFx((int)healthFx, (int)shieldFx, (int)flashFx, (int)lumR, (int)lumG, (int)lumB, (int)brightness, (int)fxEnabled, (int)brightnessEnabled);
-
         updatePalette = TRUE;
     }
 }

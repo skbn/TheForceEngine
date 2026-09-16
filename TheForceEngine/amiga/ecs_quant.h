@@ -21,17 +21,17 @@ extern QuantMethod quantMethod;
 extern uint8 *paletteCurrent;
 
 #ifdef QUANT_ASM
-    extern "C"
-    {
-        void ecsBuildRemap_asm(const uint8 *palette __asm("a0"), uint8 *remap __asm("a1"));
-        void ecsRemapLightmap_asm(uint8 depth __asm("d0"), const uint8 *orig __asm("a0"), uint8 *lightmap __asm("a1"), const uint8 *remap __asm("a2"));
-    }
+extern "C"
+{
+    void ecsBuildRemap_asm(const uint8 *palette __asm("a0"), uint8 *remap __asm("a1"));
+    void ecsRemapLightmap_asm(uint8 depth __asm("d0"), const uint8 *orig __asm("a0"), uint8 *lightmap __asm("a1"), const uint8 *remap __asm("a2"));
+}
 
-    #define ecsBuildRemap ecsBuildRemap_asm
-    #define ecsRemapLightmap ecsRemapLightmap_asm
+#define ecsBuildRemap ecsBuildRemap_asm
+#define ecsRemapLightmap ecsRemapLightmap_asm
 #else
-    #define ecsBuildRemap ecsBuildRemap_c
-    #define ecsRemapLightmap ecsRemapLightmap_c
+#define ecsBuildRemap ecsBuildRemap_c
+#define ecsRemapLightmap ecsRemapLightmap_c
 #endif
 
 void ecsComputeColorWeights(const uint8 *lightmap, int16_t colorWeight[256]);

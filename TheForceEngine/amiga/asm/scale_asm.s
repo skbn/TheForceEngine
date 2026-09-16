@@ -4,7 +4,6 @@
 ; 68020+
 ;
 
-
     section .text,code
 
     XDEF _scaleNearest2x_asm
@@ -14,8 +13,6 @@
 
 FW = 320
 FH = 200
-
-
 
 ; void scaleNearest2x_asm(const uint8 *src, uint8 *dst, int displayWidth)
 ; a0=src, a1=dst, d0=displayWidth
@@ -33,7 +30,7 @@ scaleNearest2x_asm:
     ; a4 = row0, a3 = row1, 4 src px per pass
     move.l a1,a4
     lea (a1,d0.l),a3
-    move.w #FW/4-1,d6
+    moveq #FW/4-1,d6
 
 .sn_col4:
     ; w0 = p0|p0|p1|p1
@@ -87,7 +84,7 @@ scale2x_asm:
     move.l d0,d7
     lea FW*FH(a0),a6
 
-    ; a2 = rowUp, starts at row0 (yUp clamps to 0)
+    ; a2 = rowUp (clamps to row0)
     move.l a0,a2
     move.w #FH-1,d5
 
@@ -104,8 +101,10 @@ scale2x_asm:
 .s2_dn_ok:
     move.l a1,a4
     lea (a1,d7.l),a5
+
     ; prevE = rowMid[0], serves as left neighbour for x=0
     move.b (a0),d1
+
     ; inner loop runs x=0..FW-2, last column is peeled so f needs no clamp
     move.w #FW-2,d6
 

@@ -4,6 +4,11 @@
 
 namespace TFE_Jedi
 {
+#ifdef USE_ASM
+	extern "C" void clipScanline_asm(s32* left, s32* right, s32 y);
+	#define clipScanline clipScanline_asm
+#endif
+
 #ifdef __AMIGA__
 	static inline
 #endif
@@ -224,6 +229,7 @@ namespace TFE_Jedi
 		return true;
 	}
 
+#if !defined(__AMIGA__) || !defined(USE_ASM)
 #ifdef __AMIGA__
 	static
 #endif
@@ -320,4 +326,5 @@ namespace TFE_Jedi
 			}
 		}
 	}
+#endif
 }

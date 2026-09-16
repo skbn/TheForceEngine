@@ -118,6 +118,10 @@ AMIGA_SRC = \
 	amiga/ecs_quant_wu.cpp \
 	amiga/asm/ecs_quant_wu_asm.s \
 	amiga/asm/solveForZ_asm.s \
+	amiga/asm/wall_process_asm.s \
+	amiga/asm/flat_draw_asm.s \
+	amiga/asm/flat_build_asm.s \
+	amiga/asm/flat_drawPolygon_asm.s \
 	amiga/asm/wall_drawSolid_asm.s \
 	amiga/asm/wall_drawTransparent_asm.s \
 	amiga/asm/wall_drawBottom_asm.s \
@@ -128,7 +132,11 @@ AMIGA_SRC = \
 	amiga/asm/drawScanline_asm.s \
 	amiga/asm/robj3d_transform_asm.s \
 	amiga/asm/robj3d_shade_asm.s \
-	amiga/asm/robj3d_drawColumn_asm.s
+	amiga/asm/robj3d_drawColumn_asm.s \
+	amiga/asm/robj3d_edge_asm.s \
+	amiga/asm/robj3d_drawPolygon_asm.s \
+	amiga/asm/dot_asm.s \
+	amiga/asm/adjoin_window_asm.s
 
 #MAIN_SRC = \
 #	main.cpp \
@@ -358,6 +366,7 @@ $(TARGET): $(OBJS)
 ifneq ($(DEBUG), 1)
 	$(STRIP) $@
 endif
+	python3 bss2hunk.py $(TARGET)
 
 $(OBJDIR)/%.o: %.cpp
 	@mkdir -p $(OBJDIR)

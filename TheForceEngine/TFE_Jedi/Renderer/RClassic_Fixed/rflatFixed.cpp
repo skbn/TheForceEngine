@@ -322,7 +322,7 @@ namespace RClassic_Fixed
 		return true;
 	}
 
-	void flat_drawCeiling(RSector* sector, EdgePairFixed* edges, s32 count)
+	void flat_drawCeiling_c(RSector* sector, EdgePairFixed* edges, s32 count)
 	{
 		fixed16_16 textureOffsetU = s_rcfState.cameraPos.x - sector->ceilOffset.x;
 		fixed16_16 textureOffsetV = sector->ceilOffset.z - s_rcfState.cameraPos.z;
@@ -401,7 +401,7 @@ namespace RClassic_Fixed
 		}
 	}
 		
-	void flat_drawFloor(RSector* sector, EdgePairFixed* edges, s32 count)
+	void flat_drawFloor_c(RSector* sector, EdgePairFixed* edges, s32 count)
 	{
 		fixed16_16 textureOffsetU = s_rcfState.cameraPos.x - sector->floorOffset.x;
 		fixed16_16 textureOffsetV = sector->floorOffset.z - s_rcfState.cameraPos.z;
@@ -529,7 +529,7 @@ namespace RClassic_Fixed
 #endif
 	}
 
-	void flat_drawPolygonScanline(s32 x0, s32 x1, s32 y, bool trans)
+	void flat_drawPolygonScanline_c(s32 x0, s32 x1, s32 y, bool trans)
 	{
 		x0 = max(x0, s_windowMinX_Pixels);
 		x1 = min(x1, s_windowMaxX_Pixels);
@@ -578,6 +578,36 @@ extern "C"
 	const u8 **g_asm_scanlineLight = &s_scanlineLight;
 	u8 **g_asm_scanlineOut = &s_scanlineOut;
 	u8 **g_asm_ftexImage = &s_ftexImage;
+	s32 *g_asm_scanlineX0 = &s_scanlineX0;
+	s32 *g_asm_wallMaxCeilY = &s_wallMaxCeilY;
+	s32 *g_asm_wallMinFloorY = &s_wallMinFloorY;
+	s32 *g_asm_windowMinX_Pixels = &s_windowMinX_Pixels;
+	s32 *g_asm_windowMaxX_Pixels = &s_windowMaxX_Pixels;
+	s32 *g_asm_screenYMidBase = &s_screenYMidBase;
+	s32 *g_asm_screenYMidFix = &s_screenYMidFix;
+	s32 *g_asm_screenXMid = &s_screenXMid;
+	s32 *g_asm_windowMaxCeil = &s_windowMaxCeil;
+	s32 *g_asm_windowMinFloor = &s_windowMinFloor;
+
+	fixed16_16 *g_asm_s_poly_offsetX = &s_poly_offsetX;
+	fixed16_16 *g_asm_s_poly_offsetZ = &s_poly_offsetZ;
+	fixed16_16 *g_asm_s_poly_scaledHOffset = &s_poly_scaledHOffset;
+	fixed16_16 *g_asm_s_poly_sinYawHOffset = &s_poly_sinYawHOffset;
+	fixed16_16 *g_asm_s_poly_cosYawHOffset = &s_poly_cosYawHOffset;
+	fixed16_16 *g_asm_s_poly_cosYawScaledHOffset = &s_poly_cosYawScaledHOffset;
+	fixed16_16 *g_asm_s_poly_sinYawScaledHOffset = &s_poly_sinYawScaledHOffset;
+
+	bool g_asm_flat_setTexture(TextureData *tex) { return flat_setTexture(tex); }
+
+	bool g_asm_flat_buildScanlineCeiling(s32 *i, s32 count, s32 *x, s32 y, s32 *left, s32 *right, s32 *scanlineLength, const EdgePairFixed *edges)
+	{
+		return flat_buildScanlineCeiling(*i, count, *x, y, *left, *right, *scanlineLength, edges);
+	}
+
+	bool g_asm_flat_buildScanlineFloor(s32 *i, s32 count, s32 *x, s32 y, s32 *left, s32 *right, s32 *scanlineLength, const EdgePairFixed *edges)
+	{
+		return flat_buildScanlineFloor(*i, count, *x, y, *left, *right, *scanlineLength, edges);
+	}
 }
 
 }  // RFlatFixed

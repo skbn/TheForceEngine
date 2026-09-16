@@ -707,7 +707,6 @@ wall_drawBottom_asm:
     swap d0
     and.l TEXMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .nf
     move.l TEXW(sp),d1
     sub.l d0,d1
@@ -901,7 +900,6 @@ wall_drawBottom_asm:
     move.l d0,(a0)
 
     move.l (a6),d0
-    tst.l d0
     beq .sg_fb
     move.l SLIT(sp),a0
     jsr (a0)

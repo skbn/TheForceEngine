@@ -12,9 +12,9 @@ extern "C"
     void lloyd3DSeed_asm(const uint8 *r5 __asm("a0"), const uint8 *g5 __asm("a1"), const uint8 *b5 __asm("a2"), const int16_t *cw __asm("a3"), int32_t *cr __asm("a4"), int32_t *cg, int32_t *cb __asm("a6"), int32_t *dist, int nColors __asm("d0"));
 }
 
-    #define lloydMax lloydMax_asm
+#define lloydMax lloydMax_asm
 #else
-    #define lloydMax lloydMax_c
+#define lloydMax lloydMax_c
 #endif
 
 static void initLevels(int ch, int nlev, const uint8 *palette, const int16_t *colorWeight, uint8 *opt)
@@ -139,13 +139,14 @@ void ecsLloydQuant(const uint8 *palette, const int16_t *colorWeight, UWORD *outP
         int nB;
         int sB;
     } cfg[3] =
-    {
-        {2, 3, 4, 1, 2, 0}, // 16 colors: 2x4x2
-        {4, 3, 4, 1, 2, 0}, // 32 colors: 4x4x2
-        {4, 4, 8, 1, 2, 0}, // 64 colors: 4x8x2
-    };
+        {
+            {2, 3, 4, 1, 2, 0}, // 16 colors: 2x4x2
+            {4, 3, 4, 1, 2, 0}, // 32 colors: 4x4x2
+            {4, 4, 8, 1, 2, 0}, // 64 colors: 4x8x2
+        };
 
-    const int ci = (numColors == 16) ? 0 : (numColors == 32) ? 1 : 2;
+    const int ci = (numColors == 16) ? 0 : (numColors == 32) ? 1
+                                                             : 2;
     uint8 optR[8];
     uint8 optG[8];
     uint8 optB[2];

@@ -378,7 +378,6 @@ wall_drawTopAndBottom_asm:
     clr.l DYDC(sp)
     clr.l DYDNC(sp)
     move.l RCPLRAW(sp),d0
-    tst.l d0
     beq .ceil_sdone
 
     move.l CPROJ1(sp),d1
@@ -399,7 +398,6 @@ wall_drawTopAndBottom_asm:
 
 .ceil_sdone:
     move.l XOFF(sp),d0
-    tst.l d0
     beq .ceil_xdone
 
     move.l DYDC(sp),d1
@@ -504,7 +502,6 @@ wall_drawTopAndBottom_asm:
 
     move.l X0(sp),d2
     move.l LEN(sp),d3
-    tst.l d3
     ble .top_done
 
 .top_loop:
@@ -593,7 +590,6 @@ wall_drawTopAndBottom_asm:
     swap d0
     and.l TOPMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .top_nf
     move.l TOPTEXW(sp),d1
     sub.l d0,d1
@@ -726,7 +722,6 @@ wall_drawTopAndBottom_asm:
     clr.l DYDNF(sp)
     clr.l DYDF(sp)
     move.l RCPLRAW(sp),d0
-    tst.l d0
     ble .floor_sdone
 
     move.l NFPROJ1(sp),d1
@@ -747,7 +742,6 @@ wall_drawTopAndBottom_asm:
 
 .floor_sdone:
     move.l XOFF(sp),d0
-    tst.l d0
     beq .floor_xdone
 
     move.l DYDNF(sp),d1
@@ -859,7 +853,6 @@ wall_drawTopAndBottom_asm:
 
     move.l X0(sp),d2
     move.l LEN(sp),d3
-    tst.l d3
     ble .bot_done
 
 .bot_loop:
@@ -949,7 +942,6 @@ wall_drawTopAndBottom_asm:
     swap d0
     and.l BOTMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .bot_nf
     move.l BOTTEXW(sp),d1
     sub.l d0,d1
@@ -1144,7 +1136,6 @@ wall_drawTopAndBottom_asm:
     move.l d0,(a0)
 
     move.l (a6),d0
-    tst.l d0
     beq .sg_fb
     move.l SLIT(sp),a0
     jsr (a0)

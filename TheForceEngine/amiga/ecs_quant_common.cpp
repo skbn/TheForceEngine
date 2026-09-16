@@ -39,7 +39,7 @@ void ecsBuildRemap_c(const uint8 *palette, uint8 *remap)
         pal4r[i] = palette[0] >> 4;
         pal4g[i] = palette[1] >> 4;
         pal4b[i] = palette[2] >> 4;
-        
+
         palette += 3;
     }
 

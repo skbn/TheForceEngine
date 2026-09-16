@@ -18,7 +18,7 @@
 ; void ecsBuildRemap_asm(const uint8 *palette, uint8 *remap)
 ; a0=palette (768 bytes), a1=remap (256 bytes)
 
-    section .bss,bss
+    section .bss
 
 pr: ds.b 64
 pg: ds.b 64
@@ -107,7 +107,7 @@ ecsBuildRemap_asm:
     blt .inner_done
 
 .inner_loop:
-    ; dr*dr*30
+    ; NTSC-weighted squared distance
     moveq #0,d7
     move.b (a2),d7
     sub.l d0,d7
@@ -140,7 +140,7 @@ ecsBuildRemap_asm:
     move.w d6,d4
 
 .no_better:
-    ; bestDist == 0 -> break
+    ; exact match: stop
     tst.l d3
     beq .inner_done
 

@@ -481,6 +481,34 @@ extern "C"
     vec2_fixed *g_asm_s_col_dUVdY = &s_col_dUVdY;
     s32 *g_asm_s_dither = &s_dither;
     fixed16_16 *g_asm_s_ditherOffset = &s_ditherOffset;
+    vec3_fixed **g_asm_s_polyProjVtx = &s_polyProjVtx;
+    s32 *g_asm_s_polyVertexCount = &s_polyVertexCount;
+    s32 *g_asm_s_polyMaxIndex = &s_polyMaxIndex;
+    fixed16_16 **g_asm_s_polyIntensity = &s_polyIntensity;
+    vec2_fixed **g_asm_s_polyUv = &s_polyUv;
+    s32 *g_asm_s_columnX = &s_columnX;
+    fixed16_16 *g_asm_s_edgeBot_Z0 = &s_edgeBot_Z0;
+    fixed16_16 *g_asm_s_edgeBot_dZdX = &s_edgeBot_dZdX;
+    fixed16_16 *g_asm_s_edgeBot_dIdX = &s_edgeBot_dIdX;
+    fixed16_16 *g_asm_s_edgeBot_I0 = &s_edgeBot_I0;
+    vec2_fixed *g_asm_s_edgeBot_dUVdX = &s_edgeBot_dUVdX;
+    vec2_fixed *g_asm_s_edgeBot_Uv0 = &s_edgeBot_Uv0;
+    fixed16_16 *g_asm_s_edgeBot_dYdX = &s_edgeBot_dYdX;
+    fixed16_16 *g_asm_s_edgeBot_Y0 = &s_edgeBot_Y0;
+    fixed16_16 *g_asm_s_edgeTop_dIdX = &s_edgeTop_dIdX;
+    vec2_fixed *g_asm_s_edgeTop_dUVdX = &s_edgeTop_dUVdX;
+    vec2_fixed *g_asm_s_edgeTop_Uv0 = &s_edgeTop_Uv0;
+    fixed16_16 *g_asm_s_edgeTop_dYdX = &s_edgeTop_dYdX;
+    fixed16_16 *g_asm_s_edgeTop_Z0 = &s_edgeTop_Z0;
+    fixed16_16 *g_asm_s_edgeTop_Y0 = &s_edgeTop_Y0;
+    fixed16_16 *g_asm_s_edgeTop_dZdX = &s_edgeTop_dZdX;
+    fixed16_16 *g_asm_s_edgeTop_I0 = &s_edgeTop_I0;
+    s32 *g_asm_s_edgeBotY0_Pixel = &s_edgeBotY0_Pixel;
+    s32 *g_asm_s_edgeTopY0_Pixel = &s_edgeTopY0_Pixel;
+    s32 *g_asm_s_edgeBotIndex = &s_edgeBotIndex;
+    s32 *g_asm_s_edgeTopIndex = &s_edgeTopIndex;
+    s32 *g_asm_s_edgeTopLength = &s_edgeTopLength;
+    s32 *g_asm_s_edgeBotLength = &s_edgeBotLength;
 }
 
 }}  // TFE_Jedi

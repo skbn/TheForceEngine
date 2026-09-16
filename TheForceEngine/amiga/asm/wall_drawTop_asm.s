@@ -95,6 +95,12 @@ wall_drawTop_asm:
     tst.l a4
     beq .return
 
+    moveq #0,d0
+    move.w 2(a4),d0
+    subq.l #1,d0
+    move.l _g_asm_texHeightMask,a0
+    move.l d0,(a0)
+
     move.l 24(a2),d0
     move.l d0,Z0(sp)
 
@@ -682,7 +688,6 @@ wall_drawTop_asm:
     swap d0
     and.l TEXMASK(sp),d0
     move.l FLIP(sp),d1
-    tst.l d1
     beq .nf
     move.l TEXW(sp),d1
     sub.l d0,d1
@@ -876,7 +881,6 @@ wall_drawTop_asm:
     move.l d0,(a0)
 
     move.l (a6),d0
-    tst.l d0
     beq .sg_fb
     move.l SLIT(sp),a0
     jsr (a0)
