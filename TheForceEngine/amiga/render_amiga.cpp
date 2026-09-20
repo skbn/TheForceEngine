@@ -112,6 +112,7 @@ static int safetowrite = FALSE;
 static ULONG fsMonitorID = INVALID_ID;
 static ULONG fsModeID = INVALID_ID;
 struct Library *CyberGfxBase = NULL;
+ULONG directrtg = FALSE;
 static char wndPubScreen[32] = {"Workbench"};
 static ULONG rtg320x240 = FALSE;
 
@@ -180,7 +181,12 @@ static void showframe(void)
 {
     if (screen)
     {
-        currentBitMap ^= 1;
+        const int direct = directrtg && CyberGfxBase && !use_c2p;
+
+        if (direct)
+            currentBitMap = 0;
+        else
+            currentBitMap ^= 1;
 
         if (use_c2p)
         {
@@ -296,7 +302,7 @@ static void showframe(void)
             }
         }
 
-        if (ChangeScreenBuffer(screen, sbuf[currentBitMap]))
+        if (!direct && ChangeScreenBuffer(screen, sbuf[currentBitMap]))
             safetochange = FALSE;
 
         if (updatePalette)

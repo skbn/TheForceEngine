@@ -67,6 +67,8 @@
 #include "ecs_quant.h"
 #include "amiga_scalers.h"
 
+extern ULONG directrtg;
+
 #define PROGRAM_ERROR 1
 #define PROGRAM_SUCCESS 0
 
@@ -353,6 +355,9 @@ static void parseTooltypes(int argc, char *argv[])
 
         if ((value = (char *)FindToolType((CONST STRPTR *)appicon->do_ToolTypes, (CONST STRPTR) "RTG320X240")))
             rtg320x240 = TRUE;
+
+        if ((value = (char *)FindToolType((CONST STRPTR *)appicon->do_ToolTypes, (CONST STRPTR) "DIRECTRTG")))
+            directrtg = (!strcasecmp(value, "TRUE") || !strcasecmp(value, "YES") || !strcmp(value, "1")) ? TRUE : FALSE;
 
         if (fsMonitorID != (ULONG)INVALID_ID)
         {
